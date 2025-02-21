@@ -59,9 +59,6 @@ class DiscreteSACAgent:
         # for param in self.target_critic.parameters():
         #     param.requires_grad = False
 
-        self.actor_optim = torch.optim.Adam(self.actor.parameters(), lr=self.alpha, eps=1e-8)
-        self.critic_q1_optim = torch.optim.Adam(self.critic.qnet1.parameters(), lr=self.beta, eps=1e-8)
-        self.critic_q2_optim = torch.optim.Adam(self.critic.qnet2.parameters(), lr=self.beta, eps=1e-8)
 
         # target -> maximum entropy (same prob for each action)
         # - log ( 1 / A) = log A
@@ -74,6 +71,9 @@ class DiscreteSACAgent:
         self.log_alpha = torch.zeros(1, requires_grad=True, device=device)
         self.alpha = self.log_alpha.exp()
         self.alpha_optim = torch.optim.Adam([self.log_alpha], lr=self.lr, eps=1e-8)
+        self.actor_optim = torch.optim.Adam(self.actor.parameters(), lr=self.alpha, eps=1e-8)
+        self.critic_q1_optim = torch.optim.Adam(self.critic.qnet1.parameters(), lr=self.beta, eps=1e-8)
+        self.critic_q2_optim = torch.optim.Adam(self.critic.qnet2.parameters(), lr=self.beta, eps=1e-8)
 
         if self.lfd_participant_gameplay:
             self.memory= Dual_ReplayBuffer(self.buffer_max_size,self.demo_data,self.percentages)
